@@ -1,0 +1,48 @@
+@import 'tailwindcss';
+
+@config '../tailwind.config.js';
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@layer base {
+  :root {
+    --color-primary: #3b82f6;
+    --color-primary-rgb: 59, 130, 246;
+    --color-secondary: #094fc2;
+    --color-secondary-rgb: 16, 185, 129;
+    --color-accent: #f59e0b;
+    --color-accent-rgb: 245, 158, 11;
+    --color-neutral: #6b7280;
+    --color-neutral-rgb: 107, 114, 128;
+    --color-background: #f5f2ef;
+  }
+
+  body {
+    font-family: "Vazirmatn", sans-serif;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+[dir="rtl"] .space-x-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
