@@ -6,7 +6,11 @@ import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
+    
     plugins: [tailwindcss(), react()],
+    // root: "src/",
+    // publicDir: "../public/", 
+    // base: "./",
     resolve: {
         alias: {
             "@rockPaperScissors/types": path.resolve(__dirname, "./src/types/index"),

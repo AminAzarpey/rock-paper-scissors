@@ -1,21 +1,56 @@
-export type Choice = 'rock' | 'paper' | 'scissors';
-export const choices: Choice[] = ['rock', 'paper', 'scissors'];
-export const getComputerChoice = (): Choice => {
-    const randomIndex = Math.floor(Math.random() * choices.length);
-    return choices[randomIndex];
+import { GameChoice, GameResult } from "../types/game";
+import { playWinAnimation } from "./animation";
+import { useTranslation } from "../store/useTranslationStore";
+
+export const choices: GameChoice[] = ["rock", "paper", "scissors"];
+
+export const getComputerChoice = (): GameChoice => {
+  const randomIndex = Math.floor(Math.random() * choices.length);
+  return choices[randomIndex];
 };
-export const determineWinner = (userChoice: Choice, computerChoice: Choice): string => {
-    if (userChoice === computerChoice) {
-        return "It's a tie!";
-    }
 
-    if (
-        (userChoice === 'rock' && computerChoice === 'scissors') ||
-        (userChoice === 'paper' && computerChoice === 'rock') ||
-        (userChoice === 'scissors' && computerChoice === 'paper')
-    ) {
-        return 'You win!';
-    }
+export const determineWinner = (
+  userChoice: GameChoice,
+  computerChoice: GameChoice
+): GameResult => {
+  if (userChoice === computerChoice) {
+    return "draw";
+  }
 
-    return 'You lose!';
+  if (
+    (userChoice === "rock" && computerChoice === "scissors") ||
+    (userChoice === "paper" && computerChoice === "rock") ||
+    (userChoice === "scissors" && computerChoice === "paper")
+  ) {
+    return "win";
+  }
+
+  return "lose";
+};
+
+export const handleGameResult = (
+  result: GameResult,
+  setScore: (score: number) => void,
+  currentScore: number
+) => {
+  if (result === "win") {
+    playWinAnimation();
+    setScore(currentScore + 1);
+  } else if (result === "lose") {
+    setScore(currentScore - 1);
+  }
+};
+
+export const getResultMessage = (result: GameResult): string => {
+  const { t } = useTranslation();
+  switch (result) {
+    case "win":
+      return t("win");
+    case "lose":
+      return t("lose");
+    case "draw":
+      return t("draw");
+    default:
+      return "";
+  }
 };
