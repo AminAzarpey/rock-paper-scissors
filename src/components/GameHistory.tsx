@@ -1,39 +1,51 @@
 import { useTranslation } from "@rockPaperScissors/store";
-import { GameHistory as GameHistoryType } from "@rockPaperScissors/types";
+import {
+  GameHistory as GameHistoryType,
+  GameResult,
+} from "@rockPaperScissors/types";
 import { motion } from "framer-motion";
 
 interface GameHistoryProps {
   history: GameHistoryType[];
 }
 
+const getResultEmoji = (result: GameResult): string => {
+  switch (result) {
+    case "win":
+      return "🎉";
+    case "lose":
+      return "😢";
+    case "tie":
+      return "🤝";
+  }
+};
+
+const getResultColor = (result: GameResult): string => {
+  switch (result) {
+    case "win":
+      return "bg-green-500/10 dark:bg-green-500/20";
+    case "lose":
+      return "bg-red-500/10 dark:bg-red-500/20";
+    case "tie":
+      return "bg-yellow-500/10 dark:bg-yellow-500/20";
+  }
+};
+
+const getResultTextColor = (result: GameResult): string => {
+  switch (result) {
+    case "win":
+      return "text-green-500";
+    case "lose":
+      return "text-red-500";
+    case "tie":
+      return "text-yellow-500";
+  }
+};
+
 export const GameHistory = ({ history }: GameHistoryProps) => {
   const { t } = useTranslation();
 
-  const getResultEmoji = (result: string) => {
-    switch (result) {
-      case "win":
-        return "🎉";
-      case "lose":
-        return "😢";
-      case "tie":
-        return "🤝";
-      default:
-        return "";
-    }
-  };
-
-  const getResultColor = (result: string) => {
-    switch (result) {
-      case "win":
-        return "bg-green-500/10 dark:bg-green-500/20";
-      case "lose":
-        return "bg-red-500/10 dark:bg-red-500/20";
-      case "tie":
-        return "bg-yellow-500/10 dark:bg-yellow-500/20";
-      default:
-        return "bg-primary/10 dark:bg-neutral/10";
-    }
-  };
+  if (history.length === 0) return null;
 
   return (
     <motion.div
@@ -81,13 +93,7 @@ export const GameHistory = ({ history }: GameHistoryProps) => {
                   {t("result")}:
                 </span>
                 <span
-                  className={`font-medium ${
-                    round.result === "win"
-                      ? "text-green-500"
-                      : round.result === "lose"
-                      ? "text-red-500"
-                      : "text-yellow-500"
-                  }`}
+                  className={`font-medium ${getResultTextColor(round.result)}`}
                 >
                   {t(round.result)}
                 </span>

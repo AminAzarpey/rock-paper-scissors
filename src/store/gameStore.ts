@@ -11,9 +11,6 @@ interface GameState {
   computerChoice: GameChoice | null;
   result: GameResult | null;
   score: number;
-  wins: number;
-  losses: number;
-  draws: number;
   history: GameHistoryType[];
   isRoundModalOpen: boolean;
   isWinnerModalOpen: boolean;
@@ -27,14 +24,54 @@ interface GameState {
   resetGame: () => void;
 }
 
+const GAME_CHOICES: GameChoice[] = ["rock", "paper", "scissors"];
+
+const getComputerChoice = (): GameChoice => {
+  return GAME_CHOICES[Math.floor(Math.random() * GAME_CHOICES.length)];
+};
+
+const WINNING_COMBINATIONS: Record<GameChoice, GameChoice> = {
+  rock: "scissors",
+  paper: "rock",
+  scissors: "paper",
+};
+
+const getGameResult = (
+  playerChoice: GameChoice,
+  computerChoice: GameChoice
+): GameResult => {
+  if (playerChoice === computerChoice) return "tie";
+  return WINNING_COMBINATIONS[playerChoice] === computerChoice ? "win" : "lose";
+};
+
+const getNewScore = (currentScore: number, result: GameResult): number => {
+  const scoreChanges: Record<GameResult, number> = {
+    win: 1,
+    lose: -1,
+    tie: 0,
+  };
+  return currentScore + scoreChanges[result];
+};
+
+const getRoundLimit = (gameMode: GameMode): number => {
+  const roundLimits: Record<GameMode, number> = {
+    "1round": 1,
+    "3round": 3,
+    "5round": 5,
+    infinite: Infinity,
+  };
+  return roundLimits[gameMode];
+};
+
+const isGameFinished = (gameMode: GameMode, historyLength: number): boolean => {
+  return historyLength >= getRoundLimit(gameMode);
+};
+
 export const useGameStore = create<GameState>((set, get) => ({
   playerChoice: null,
   computerChoice: null,
   result: null,
   score: 0,
-  wins: 0,
-  losses: 0,
-  draws: 0,
   history: [],
   isRoundModalOpen: false,
   isWinnerModalOpen: false,
@@ -46,43 +83,20 @@ export const useGameStore = create<GameState>((set, get) => ({
     set({ gameMode: mode, isGameStarted: false, isGameEnded: false }),
 
   setPlayerChoice: (choice) => {
-    const computerChoice = ["rock", "paper", "scissors"][
-      Math.floor(Math.random() * 3)
-    ] as GameChoice;
-
-    let result: GameResult;
-    if (choice === computerChoice) {
-      result = "tie";
-    } else if (
-      (choice === "rock" && computerChoice === "scissors") ||
-      (choice === "paper" && computerChoice === "rock") ||
-      (choice === "scissors" && computerChoice === "paper")
-    ) {
-      result = "win";
-    } else {
-      result = "lose";
-    }
-
-    const newScore =
-      get().score + (result === "win" ? 1 : result === "lose" ? -1 : 0);
+    const computerChoice = getComputerChoice();
+    const result = getGameResult(choice, computerChoice);
+    const newScore = getNewScore(get().score, result);
     const newHistory = [
       ...get().history,
       { playerChoice: choice, computerChoice, result },
     ];
-
-    const isGameEnded =
-      get().gameMode === "1round" ||
-      (get().gameMode === "3round" && newHistory.length >= 3) ||
-      (get().gameMode === "5round" && newHistory.length >= 5);
+    const isGameEnded = isGameFinished(get().gameMode, newHistory.length);
 
     set({
       playerChoice: choice,
       computerChoice,
       result,
       score: newScore,
-      wins: get().wins + (result === "win" ? 1 : 0),
-      losses: get().losses + (result === "lose" ? 1 : 0),
-      draws: get().draws + (result === "tie" ? 1 : 0),
       history: newHistory,
       isRoundModalOpen: true,
       isGameStarted: true,
@@ -101,9 +115,6 @@ export const useGameStore = create<GameState>((set, get) => ({
       computerChoice: null,
       result: null,
       score: 0,
-      wins: 0,
-      losses: 0,
-      draws: 0,
       history: [],
       isRoundModalOpen: false,
       isWinnerModalOpen: false,

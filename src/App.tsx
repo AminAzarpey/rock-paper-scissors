@@ -11,16 +11,13 @@ import {
 } from "./components";
 
 function App() {
-  const { isDarkMode, toggleDarkMode, theme } = useThemeStore();
-  const { language, t } = useTranslation();
+  const { isDarkMode } = useThemeStore();
+  const { t } = useTranslation();
   const {
     playerChoice,
     computerChoice,
     result,
     score,
-    wins,
-    losses,
-    draws,
     history,
     isRoundModalOpen,
     isWinnerModalOpen,
@@ -29,7 +26,6 @@ function App() {
     setPlayerChoice,
     closeRoundModal,
     closeWinnerModal,
-    resetGame,
     isGameStarted,
     isGameEnded,
   } = useGameStore();
@@ -38,13 +34,14 @@ function App() {
     document.documentElement.classList.toggle("dark", isDarkMode);
   }, [isDarkMode]);
 
-  useEffect(() => {
-    document.documentElement.dir = language === "fa" ? "rtl" : "ltr";
-  }, [language]);
+  const getWinner = () => {
+    if (score > 0) return "player";
+    if (score < 0) return "computer";
+    return "tie";
+  };
 
   return (
     <Layout>
-      {/* Game Status */}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold mb-4">{t("rockPaperScissors")}</h1>
         <div className="text-2xl font-semibold">
@@ -52,9 +49,8 @@ function App() {
         </div>
       </div>
 
-      {/* Game Board and History */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className={language === "fa" ? "order-2" : ""}>
+        <div>
           <GameModeSelector
             selectedMode={gameMode}
             onModeChange={setGameMode}
@@ -67,26 +63,26 @@ function App() {
             onModelClick={setPlayerChoice}
           />
         </div>
-        <div className={language === "fa" ? "order-1" : ""}>
-          {history.length > 0 && <GameHistory history={history} />}
+        <div>
+          <GameHistory history={history} />
         </div>
       </div>
 
-      {/* Modals */}
-      {isRoundModalOpen && (
+      {isRoundModalOpen && playerChoice && computerChoice && result && (
         <RoundModal
           isOpen={isRoundModalOpen}
           onClose={closeRoundModal}
-          playerChoice={playerChoice!}
-          computerChoice={computerChoice!}
-          result={result!}
+          playerChoice={playerChoice}
+          computerChoice={computerChoice}
+          result={result}
         />
       )}
+
       {isWinnerModalOpen && (
         <WinnerModal
           isOpen={isWinnerModalOpen}
           onClose={closeWinnerModal}
-          winner={score > 0 ? "player" : score < 0 ? "computer" : "tie"}
+          winner={getWinner()}
           score={Math.abs(score)}
         />
       )}
