@@ -31,6 +31,7 @@
       "@rockPaperScissors/types": ["./src/types/index"],
       "@rockPaperScissors/store": ["./src/store/index"],
       "@rockPaperScissors/utils": ["./src/utils/index"],
+      "@rockPaperScissors/components": ["./src/components/index"]
     }
   },
   "include": ["src"]

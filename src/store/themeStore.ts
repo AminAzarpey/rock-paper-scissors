@@ -2,7 +2,6 @@ import { Theme } from "@rockPaperScissors/types";
 import { applyTheme, defaultTheme } from "@rockPaperScissors/utils";
 import { create } from "zustand";
 
-
 interface ThemeStore {
   isDarkMode: boolean;
   theme: Theme;
