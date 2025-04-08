@@ -1,4 +1,4 @@
-import {useGameStore, useThemeStore, useTranslation} from "@rockPaperScissors/store";
+import {useGameStore, useTranslation} from "@rockPaperScissors/store";
 import {GameChoice} from "@rockPaperScissors/types";
 import {motion} from "framer-motion";
 
@@ -15,7 +15,6 @@ export const GameScene = ({
                           }: GameSceneProps) => {
     const {t} = useTranslation();
     const {resetGame} = useGameStore();
-    const {theme} = useThemeStore();
 
     const choices: { value: GameChoice; emoji: string }[] = [
         {value: "rock", emoji: "✊"},
